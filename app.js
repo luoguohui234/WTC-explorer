@@ -13,43 +13,67 @@ var events = require('./routes/events');
 var search = require('./routes/search');
 
 var config = new(require('./config.js'))();
-var Datastore = require('nedb-core')
-var db = new Datastore({ filename: './data.db', autoload: true });
+//var Datastore = require('nedb-core')
+//var db = new Datastore({ filename: './data.db', autoload: true });
 
-db.ensureIndex({ fieldName: 'balance' }, function (err) {
-  if (err) {
-    console.log("Error creating balance db index:", err);
-  }
-});
-
-db.ensureIndex({ fieldName: 'timestamp' }, function (err) {
-  if (err) {
-    console.log("Error creating timestamp db index:", err);
-  }
-});
-
-db.ensureIndex({ fieldName: 'args._from' }, function (err) {
-  if (err) {
-    console.log("Error creating _from db index:", err);
-  }
-});
-
-db.ensureIndex({ fieldName: 'args._to' }, function (err) {
-  if (err) {
-    console.log("Error creating _to db index:", err);
-  }
-});
-
-var exporterService = require('./services/exporter.js');
-var exporter = new exporterService(config, db);
+var mongo = require("mongodb");
+var assert = require("assert");
 
 var app = express();
+
+mongo.MongoClient.connect("mongodb://localhost:27017/", function(err, result) {
+  assert.equal(null, err);
+
+  console.log("Connect to mongodb success");
+  db = result.db(config.dbName);
+
+  db.collection(config.tableBlanceName).ensureIndex({ 'balance' : 1 }, { "unique" : false }, function (err) {
+    if (err) {
+      console.log("Error creating balance db index:", err);
+    }
+    console.log("Collection ensureIndex balance");
+  });
+
+
+  db.collection(config.tableTxName).ensureIndex({ 'timestamp' : -1 }, { "unique" : false }, function (err) {
+    if (err) {
+      console.log("Error creating timestamp db index:", err);
+    }
+    console.log("Collection ensureIndex timestamp");
+  });
+
+  db.collection(config.tableTxName).ensureIndex('args._from', { "unique" : false }, function (err) {
+    if (err) {
+      console.log("Error creating _from db index:", err);
+    }
+    console.log("Collection ensureIndex _from");
+  });
+
+  db.collection(config.tableTxName).ensureIndex('args._to', { "unique" : false }, function (err) {
+    if (err) {
+      console.log("Error creating _to db index:", err);
+    }
+    console.log("Collection ensureIndex _to");
+  });
+
+  db.collection(config.tableRecordName).ensureIndex('account', { "unique" : false }, function (err) {
+    if (err) {
+      console.log("Error creating account db index:", err);
+    }
+    console.log("Collection ensureIndex account");
+  });
+
+  var exporterService = require('./services/exporter.js');
+  var exporter = new exporterService(config, db);
+
+  app.set('db', db);
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.set('config', config);
-app.set('db', db);
+
 app.set('trust proxy', true);
 
 // uncomment after placing your favicon in /public

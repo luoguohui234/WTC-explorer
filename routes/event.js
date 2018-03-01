@@ -3,8 +3,9 @@ var router = express.Router();
 
 router.get('/:event', function(req, res, next) {
   var db = req.app.get('db');
+  var config = req.app.get('config');
   
-  db.find({_id: req.params.event}).exec(function (err, event) {
+  db.collection(config.tableTxName).find({_id: req.params.event}).toArray(function (err, event) {
     
     if (err) {
       return next(err);

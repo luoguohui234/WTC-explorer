@@ -61,4 +61,4 @@ typings/
 data.db
 
 # Configuration file
-config.js
+#config.js
