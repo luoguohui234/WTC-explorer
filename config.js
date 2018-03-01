@@ -22,7 +22,7 @@ var config = function () {
     
   this.exportStartBlock = 0; // Start block for the historic export (set to 0 for a full export)
   
-  this.dbName = "erc20_1"; // db name
+  this.dbName = "wtc"; // db name
   this.tableStateName = "state"; // save app state
   this.tableTxName = "tx"; // save event record
   this.tableBlanceName = "balance"; // save account balance

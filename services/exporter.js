@@ -73,7 +73,7 @@ var exporter = function(config, db) {
       console.log("Waterfall1 end");
   });
 
-  self.initApply = function() {
+  self.initApply = function(callback) {
     async.waterfall([
       function(callback) {
         if (!self.state.initApply) {
@@ -119,6 +119,8 @@ var exporter = function(config, db) {
         console.log(err);
       }
       console.log("Waterfall3 end");
+
+      if (callback) callback();
     });
   }
 
@@ -288,22 +290,6 @@ var exporter = function(config, db) {
         self.caculateBalance(from, timestamp, -1*value, function() {
           if (callback) callback();
         });
-        // self.contract.balanceOf(from, function(err, balance) {
-        //   if (err) {
-        //     console.log("Export balance:", err);
-        //     if (callback) callback();
-        //     return;
-        //   }
-
-        //   var doc = { account: from, value: -1*value, balance: balance.toNumber(), timestamp: timestamp };
-        //   self.db.collection(config.tableRecordName).insert(doc, function(err, newDoc) {
-        //     if (err) {
-        //       console.log("Error inserting balance record:", err);
-        //     }
-
-        //     if (callback) callback();
-        //   });
-        // });
       },
       function(callback) {
         if (!to) {
@@ -314,22 +300,6 @@ var exporter = function(config, db) {
         self.caculateBalance(to, timestamp, value, function() {
           if (callback) callback();
         });
-        // self.contract.balanceOf(to, function(err, balance) {
-        //   if (err) {
-        //     console.log("Export balance:", err);
-        //     if (callback) callback();
-        //     return;
-        //   }
-
-        //   var doc = { account: to, value: value, balance: balance.toNumber(), timestamp: timestamp };
-        //   self.db.collection(config.tableRecordName).insert(doc, function(err, newDoc) {
-        //     if (err) {
-        //       console.log("Error inserting balance record:", err);
-        //     }
-
-        //     if (callback) callback();
-        //   });
-        // });
       }
     ],
     function(err, results) {
