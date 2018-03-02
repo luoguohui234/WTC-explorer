@@ -7,7 +7,7 @@
 
 1. 安装nodejs和npm
 2. 安装以太坊节点Geth
-3. 运行`Geth --syncmode=full`并完全同步数据（耗时很长的步骤）
+3. 运行`geth --syncmode=full`并完全同步数据（耗时很长的步骤）
 4. 克隆项目: `git clone https://github.com/luoguohui234/wtc-explorer.git`
 5. 安装mongodb，启动mongodb后台服务`sudo service mongodb start`
 5. 安装项目依赖: `npm install`
