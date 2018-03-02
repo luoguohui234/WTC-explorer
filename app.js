@@ -63,6 +63,13 @@ mongo.MongoClient.connect("mongodb://localhost:27017/", function(err, result) {
     console.log("Collection ensureIndex account");
   });
 
+  db.collection(config.tableRecordName).ensureIndex({ 'timestamp' : 1 }, { "unique" : false }, function (err) {
+    if (err) {
+      console.log("Error creating timestamp db index:", err);
+    }
+    console.log("Collection ensureIndex timestamp");
+  });
+
   var exporterService = require('./services/exporter.js');
   var exporter = new exporterService(config, db);
 
